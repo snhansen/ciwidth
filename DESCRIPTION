@@ -1,0 +1,17 @@
+Package: ciwidth
+Title: Sample size calculations based on confidence intervals
+Version: 0.0.0.9000
+Authors@R: 
+    person("Stefan Nygaard", "Hansen", , "stefanh@ph.au.dk", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-0877-556X"))
+Description: The package enables calculation of the required sample size to ensure that  confidence intervals for a mean or mean difference are within a certain width with a certain probability.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Imports: 
+    dplyr,
+    ggplot2,
+    purrr,
+    rlang,
+    stats
