@@ -31,7 +31,7 @@ library(ciwidth)
 ci_width_mean(sigma = c(10, 15), width = 5:10, prob = c(0.80, 0.90))
 #> # A tibble: 24 × 5
 #>    sigma width  prob     n conf.level
-#>    <dbl> <dbl> <dbl> <dbl>      <dbl>
+#>    <dbl> <int> <dbl> <dbl>      <dbl>
 #>  1    10     5   0.8  72.3       0.95
 #>  2    15     5   0.8 154.        0.95
 #>  3    10     6   0.8  52.0       0.95
@@ -60,10 +60,9 @@ library(ggplot2)
 #> Warning: package 'ggplot2' was built under R version 4.4.3
 fig <- ci_width_mean(sigma = c(10, 15), width = 5:10, prob = c(0.80, 0.90), plot = TRUE)
 fig <- fig + 
-  geom_line() + 
-  labs(x = "CI width", y = "Sample size", color = "Probability")
+  labs(x = "CI width", y = "Sample size", color = "Probability") + 
+  facet_wrap(~ sigma, labeller = labeller(sigma = c("10" = "Sigma: 10", "15" = "Sigma: 15")))
 
-fig$facet$params$labeller <- labeller(sigma = c("10" = "Sigma: 10", "15" = "Sigma: 15"))
 fig
 ```
 
