@@ -1,0 +1,56 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# ciwidth
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+With `ciwidth` you can determine the sample size needed for obtaining confidence intervals for means and mean differences which has a given width with a given probability. 
+
+## Installation
+
+You can install the development version of ciwidth from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("snhansen/ciwidth")
+```
+
+## Example
+
+Let us calculate the sample sizes needed to obtain a 95% confidence interval for a mean of width 5, 6, 7, 8 and 10 with a probability of either 80% or 90% and a standard deviation of 10 or 15:
+
+```{r example}
+library(ciwidth)
+ci_width_mean(sigma = c(10, 15), width = 5:10, prob = c(0.80, 0.90))
+```
+With the `plot`-argument, you can create a `ggplot2` figure:
+
+```{r example-figure}
+ci_width_mean(sigma = c(10, 15), width = 5:10, prob = c(0.80, 0.90), plot = TRUE)
+```
+
+Since this is just a `ggplot2` figure, we can customize it afterwards:
+
+```{r example-figure-2}
+library(ggplot2)
+fig <- ci_width_mean(sigma = c(10, 15), width = 5:10, prob = c(0.80, 0.90), plot = TRUE)
+fig <- fig + 
+  labs(x = "CI width", y = "Sample size", color = "Probability") + 
+  facet_wrap(~ sigma, labeller = labeller(sigma = c("10" = "Sigma: 10", "15" = "Sigma: 15")))
+
+fig
+```

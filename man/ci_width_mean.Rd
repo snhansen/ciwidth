@@ -12,7 +12,8 @@ ci_width_mean(
   prob = NULL,
   conf.level = 0.95,
   plot = FALSE,
-  plot_order = c("n", "width", "prob", "sigma")
+  plot_order = c("n", "width", "prob", "sigma"),
+  connect = TRUE
 )
 }
 \arguments{
@@ -36,9 +37,11 @@ ci_width_mean(
 \item 1: y-axis, 2: x-axis, 3: color, 4: facet.
 }
 }}
+
+\item{connect}{Connects the observations in the plot.}
 }
 \value{
-A \code{ggplot2} object or data frame (if \code{plot = FALSE}).
+A \code{ggplot2} object or data.frame (if \code{plot = FALSE}).
 }
 \description{
 One can provide several values of arguments, and the function returns

@@ -36,7 +36,7 @@ ci_width_mean_cdf <- function(sigma, width, n, conf.level = 0.95) {
 #' @param prob Probability of obtaining given width.
 #' @param conf.level Confidence level of the interval.
 #'
-#' @returns A named list of size five.
+#' @returns A data.frame.
 #'
 #' @noRd
 #' @keywords internal
@@ -51,7 +51,7 @@ ci_width_mean_simple <- function(sigma, width = NULL, n = NULL, prob = NULL, con
     n <- stats::uniroot(\(n) ci_width_mean_cdf(width = width, n = n, sigma = sigma, conf.level = conf.level) - prob, c(2, 1e+07))$root
   }
 
-  list(
+  dplyr::tibble(
     sigma = sigma,
     width = width,
     prob = prob,
@@ -80,8 +80,9 @@ ci_width_mean_simple <- function(sigma, width = NULL, n = NULL, prob = NULL, con
 #' + A vector with names of up to four arguments (sigma, width, n, prob, conf.level)
 #' + The order of the arguments determines the appearance of the plot:
 #'    - 1: y-axis, 2: x-axis, 3: color, 4: facet.
+#' @param connect Connects the observations in the plot.
 #'
-#' @returns A `ggplot2` object or data frame (if `plot = FALSE`).
+#' @returns A `ggplot2` object or data.frame (if `plot = FALSE`).
 #'
 #' @importFrom rlang :=
 #' @export
@@ -95,7 +96,7 @@ ci_width_mean_simple <- function(sigma, width = NULL, n = NULL, prob = NULL, con
 #' # Make a plot of the sample size as a function of width, probability and
 #' # standard deviation:
 #' ci_width_mean(sigma = c(10, 15), width = 5:10, prob = c(0.80, 0.90), plot = TRUE)
-ci_width_mean <- function(sigma, width = NULL, n = NULL, prob = NULL, conf.level = 0.95, plot = FALSE, plot_order = c("n", "width", "prob", "sigma")) {
+ci_width_mean <- function(sigma, width = NULL, n = NULL, prob = NULL, conf.level = 0.95, plot = FALSE, plot_order = c("n", "width", "prob", "sigma"), connect = TRUE) {
   # Check for valid arguments.
   if (!valid_range(sigma, lower = 0)) {
     stop("'sigma' must contain values > 0.")
@@ -114,24 +115,32 @@ ci_width_mean <- function(sigma, width = NULL, n = NULL, prob = NULL, conf.level
     stop("Exactly two of the arguments 'n', 'width, and 'prob' must be specified.")
   }
 
-  # Do calculations and collect them in a data frame.
+  # Make a data frame for all combinations of theprovided arguments.
   pars <- list(sigma = sigma, width = width, n = n, prob = prob, conf.level = conf.level)
   pars <- pars[!sapply(pars, is.null)]
   df <- do.call(expand.grid, pars)
-  df <- purrr::pmap(df, ci_width_mean_simple)
-  df <- do.call(rbind, lapply(df, unlist)) |>
-    dplyr::as_tibble()
 
+  # Calculate the missing argument and collect the results as a data frame.
+  df <- purrr::pmap(df, ci_width_mean_simple)
+  df <- do.call(rbind, df)
+
+  # Return data frame.
   if (!plot) {
     return(df)
   }
 
-  # Make a plot.
+  # Else make a plot.
+
+  # We extract all the arguments that have more than one value.
   plot_vars <- df |>
     dplyr::select(dplyr::where(~ dplyr::n_distinct(.x) > 1)) |>
     names()
 
   plot_order <- plot_order[plot_order %in% plot_vars]
+
+  if (length(plot_order) > 4) {
+    stop("'plot_order' must contain at most four arguments.")
+  }
 
   if (length(plot_order) <= 2) {
     fig <- ggplot2::ggplot(data = df, mapping = ggplot2::aes(y = !!rlang::sym(plot_order[1]), x = !!rlang::sym(plot_order[2])))
@@ -144,6 +153,10 @@ ci_width_mean <- function(sigma, width = NULL, n = NULL, prob = NULL, conf.level
   fig <- fig + ggplot2::geom_point()
   if (length(plot_order) == 4) {
     fig <- fig + ggplot2::facet_wrap(paste("~", plot_order[4]))
+  }
+
+  if (connect) {
+    fig <- fig + ggplot2::geom_line()
   }
 
   fig <- fig + ggplot2::theme_minimal()
