@@ -4,6 +4,7 @@
 # ciwidth
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 With `ciwidth` you can determine the sample size needed for obtaining

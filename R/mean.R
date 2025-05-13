@@ -4,7 +4,7 @@
 #' of the confidence interval for a mean based on the t-distribution, i.e.
 #' what t.test() provides.
 #'
-#' This assumes the observations are normally distributed with standard
+#' This assumes the observations are i.i.d normally distributed with standard
 #' deviation sigma which is treated as unknown to us and must be estimated.
 #'
 #' @param sigma Standard deviation.
@@ -27,7 +27,7 @@ ci_width_mean_cdf <- function(sigma, width, n, conf.level = 0.95) {
 #' Calculates the probability, width or sample size given the two others
 #' for confidence interval of a mean.
 #'
-#' This assumes the observations are normally distributed with standard
+#' This assumes the observations are i.i.d normally distributed with standard
 #' deviation sigma which is treated as unknown to us and must be estimated.
 #'
 #' @param sigma Standard deviation.
@@ -67,7 +67,7 @@ ci_width_mean_simple <- function(sigma, width = NULL, n = NULL, prob = NULL, con
 #' One can provide several values of arguments, and the function returns
 #' the results as a data.frame or a `ggplot2` plot.
 #'
-#' This assumes the observations are normally distributed with standard
+#' This assumes the observations are i.i.d normally distributed with standard
 #' deviation sigma which is treated as unknown to us and must be estimated.
 #'
 #' @param sigma Standard deviation.
@@ -89,8 +89,8 @@ ci_width_mean_simple <- function(sigma, width = NULL, n = NULL, prob = NULL, con
 #'
 #' @examples
 #' # Calculate the sample sizes needed to obtain a 95% confidence interval
-#' # of width 5, 6, 7, 8 and 10 with a probability of either 80% or 90% a
-#' # standard deviation of 10 or 15:
+#' # for a mean of width 5, 6, 7, 8 and 10 with a probability of either 80%
+#' # or 90% and a standard deviation of 10 or 15:
 #' ci_width_mean(sigma = c(10, 15), width = 5:10, prob = c(0.80, 0.90))
 #'
 #' # Make a plot of the sample size as a function of width, probability and
@@ -115,7 +115,7 @@ ci_width_mean <- function(sigma, width = NULL, n = NULL, prob = NULL, conf.level
     stop("Exactly two of the arguments 'n', 'width, and 'prob' must be specified.")
   }
 
-  # Make a data frame for all combinations of theprovided arguments.
+  # Make a data frame for all combinations of the provided arguments.
   pars <- list(sigma = sigma, width = width, n = n, prob = prob, conf.level = conf.level)
   pars <- pars[!sapply(pars, is.null)]
   df <- do.call(expand.grid, pars)
